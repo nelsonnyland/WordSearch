@@ -18,8 +18,7 @@ def search(directoryString, searchString):
     for file in os.listdir(directoryString):
         if os.path.isfile(file):
             try:
-                with open(file, 'r') as fileinput:
-                    count = 1
+                with open(file, errors='ignore') as fileinput:
                     for count, line in enumerate(fileinput):
                         lineStr = line.lower()
                         if searchString in lineStr:
@@ -27,7 +26,7 @@ def search(directoryString, searchString):
                             basename = os.path.basename(file)
                             if len(basename) > 35:
                                 basename = basename[0:34] + '...'
-                            print('File {}: Line {}: {}'.format(basename, count, line))
+                            print('File {}: Line {}: {}'.format(basename, count + 1, line))
             except IOError as e:
                 if e.errno == errno.ENOENT:
                     print(os.path.basename(file), ' does not exist')
