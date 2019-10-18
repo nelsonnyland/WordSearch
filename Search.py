@@ -6,16 +6,25 @@ COUNT_NAME_LENGTH = 4
 POINTER_LENGTH = 50
 
 def main():
-    # read from console the keyword search
+    # read from console
     print('WORD SEARCH 0.1')
     directoryString = input('Dir: ')
     if not os.path.exists(directoryString):
         print("must be a working directory\n")
         main()
-    searchString = input('Search: ')
-    search(directoryString, searchString.lower())
+    searchStr = input('Search: ')
+    mode = testMode(searchStr)
+    openDir(directoryString, searchStr, mode)
 
-def search(directoryString, searchStr):
+# returns search mode: 1 for literal, 0 for default
+def testMode(s):
+    if (s[0] is '\"' or s[0] is '\'') and (s[len(s) - 1] is '\"' or s[len(s) - 1] is '\''):
+        return 1
+    else:
+        return 0
+
+# opens and searches files
+def openDir(directoryString, searchStr, mode):
     foundBool = False
     # search and output
     os.chdir(directoryString)
@@ -24,11 +33,9 @@ def search(directoryString, searchStr):
             try:
                 with open(file, errors='ignore') as fileinput:
                     for count, line in enumerate(fileinput):
-                        lineStr = line.lower()
-                        pointer = '^'
-                        if searchStr in lineStr:
+                        set = StringSet(mode, searchStr, os.path.basename(file), count, line)
+                        if search(set):
                             foundBool = True
-                            set = StringSet(searchStr, os.path.basename(file), count, lineStr, pointer)
                             printToConsole(processStrings(set))
             except IOError as e:
                 if e.errno == errno.ENOENT:
@@ -39,6 +46,17 @@ def search(directoryString, searchStr):
                     print(os.path.basename(file), e)
     if foundBool is False:
         print('**NO WORDS FOUND**')
+
+def search(set):
+    if set.mode is 0:
+        if set.searchStr in set.line:
+            return True
+    elif set.mode is 1:
+        set.searchStr = set.searchStr.strip('\"')
+        set.searchStr = set.searchStr.strip('\'')
+        newSearchStr = ' ' + set.searchStr + ' '
+        if newSearchStr in set.line:
+            return True
 
 # processes the strings to format in console
 def processStrings(set):
@@ -60,16 +78,17 @@ def processStrings(set):
 # print to console
 def printToConsole(set):
     print('FILE: {} LINE {}: \"{}\"'.format(set.basename, set.count, set.line))
-    if (len(set.pointer) > POINTER_LENGTH):
+    if len(set.pointer) > POINTER_LENGTH:
         print(set.pointer)
 
 # boxes up the strings
 class StringSet:
-    def __init__(self, searchStr, basename, count, line, pointer):
+    def __init__(self, mode, searchStr, basename, count, line):
+        self.mode = mode
         self.searchStr = searchStr
         self.basename = basename
         self.count = count
-        self.line = line
-        self.pointer = pointer
+        self.line = line.lower()
+        self.pointer = '^'
 
 main()
