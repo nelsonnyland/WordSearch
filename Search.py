@@ -28,7 +28,7 @@ def search(directoryString, searchStr):
                         pointer = '^'
                         if searchStr in lineStr:
                             foundBool = True
-                            set = StringSet(searchStr, os.path.basename(file), count, line, pointer)
+                            set = StringSet(searchStr, os.path.basename(file), count, lineStr, pointer)
                             printToConsole(processStrings(set))
             except IOError as e:
                 if e.errno == errno.ENOENT:
