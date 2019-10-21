@@ -1,20 +1,41 @@
 import os
 import errno
+import glob
+import sys
 
 FILE_NAME_LENGTH = 30
 COUNT_NAME_LENGTH = 4
 POINTER_LENGTH = 50
 
 def main():
+    intro()
     # read from console
-    print('WORD SEARCH 0.1')
     directoryString = input('Dir: ')
+    # validate dir
+    dirValidate(directoryString)
+    # receive search term
+    searchStr = input('Search: ')
+    # test search mode
+    mode = testMode(searchStr)
+    # begin operation
+    openDir(directoryString, searchStr, mode)
+    main()
+
+# prints intro text
+def intro():
+    print('WORD SEARCH 0.1')
+    print('Searches TXT files within given directory and subdirectories. Use quotes to clarify search term.')
+    print('Enter \'q\' to exit.')
+
+# validates directory
+def dirValidate(directoryString):
+    # check for exit command
+    if directoryString.lower() == 'q':
+        sys.exit()
+    # check if directory exists
     if not os.path.exists(directoryString):
         print("must be a working directory\n")
         main()
-    searchStr = input('Search: ')
-    mode = testMode(searchStr)
-    openDir(directoryString, searchStr, mode)
 
 # returns search mode: 1 for literal, 0 for default
 def testMode(s):
@@ -29,7 +50,7 @@ def openDir(directoryString, searchStr, mode):
     foundBool = False
     # search and output
     os.chdir(directoryString)
-    for file in os.listdir(directoryString):
+    for file in glob.iglob(directoryString + '/**/*.txt', recursive=True):
         if os.path.isfile(file):
             try:
                 with open(file, errors='ignore') as fileinput:
