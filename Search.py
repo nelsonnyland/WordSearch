@@ -18,7 +18,8 @@ def main():
 
 # returns search mode: 1 for literal, 0 for default
 def testMode(s):
-    if (s[0] is '\"' or s[0] is '\'') and (s[len(s) - 1] is '\"' or s[len(s) - 1] is '\''):
+    if ((s.startswith('\'') and s.endswith('\'')) or
+        (s.startswith('\"') and s.endswith('\"'))):
         return 1
     else:
         return 0
