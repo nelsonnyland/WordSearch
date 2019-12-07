@@ -75,10 +75,10 @@ def openDir(path, words, mode):
         print('**NO WORDS FOUND**')
 
 def search(set):
-    if set.mode is 0:
+    if set.mode == 0:
         if set.words in set.line:
             return True
-    elif set.mode is 1:
+    elif set.mode == 1:
         set.words = set.words.strip('\"')
         set.words = set.words.strip('\'')
         newSearch = ' ' + set.words + ' '
