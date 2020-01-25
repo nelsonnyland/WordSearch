@@ -13,7 +13,7 @@ def main():
     # read from console
     path = input('Dir: ')
     # validate dir
-    dirValidate(path)
+    path = dirValidate(path)
     # receive search term
     words = input('Search: ')
     # test search mode
@@ -36,11 +36,12 @@ def dirValidate(path):
     if path.lower() == 'q':
         sys.exit()
     # correct backslashes
-    path.replace('\\', '/')
+    path = path.replace('\\', '/')
     # check if directory exists
     if not os.path.exists(path):
         print("must be a working directory\n")
         main()
+    return path
 
 # returns search mode: 1 for literal, 0 for default
 def testMode(s):
